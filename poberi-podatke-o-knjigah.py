@@ -10,8 +10,6 @@ json_datoteka = os.path.join("linki", "linki.json")
 with open(json_datoteka, encoding="utf-8") as f:
     seznam_linkov = json.load(f)
 
-# orodja.shrani_spletno_stran(seznam_linkov[0], "html-strani-knjig\knjiga-1")
-
 vzorec_knjige = re.compile(
     r'<h1 id="bookTitle" class="gr-h1 gr-h1--serif" itemprop="name">\s*(?P<naslov>.*?)\s*</h1>.*?'
     r'<span itemprop="name">(?P<avtor>.*?)</span>.*?'
@@ -27,7 +25,7 @@ vzorec_knjige = re.compile(
     flags=re.DOTALL
 )
 
-vzorec_knjige2 = re.compile(
+vzorec_knjige2 = re.compile( # včasih requests.get vrne html take oblike, včasih pa html oblike prejšnjega vzorca
     r'{"@type":"AggregateRating","ratingValue":(?P<ocena>\d\.\d\d?),"ratingCount":(?P<stevilo_ocen>\d+),"reviewCount":(?P<stevilo_mnenj>\d+)}.*?'
     r'data-testid="bookTitle" aria-label="Book title: (?P<naslov>.*?)">.*?'
     r'class="ContributorLink__name" data-testid="name">(?P<avtor>.*?)</span>.*?'
@@ -46,7 +44,7 @@ vzorec_opisa1 = re.compile(
     flags=re.DOTALL
 )
 
-vzorec_opisa2 = re.compile(
+vzorec_opisa2 = re.compile( # včasih je opis take oblike, včasih pa zgornje
     r'<span id="freeText\d+" style="display:none">(?P<opis>.*?)</span>',
     flags=re.DOTALL
 )
@@ -98,7 +96,7 @@ for i, url in enumerate(seznam_linkov):
         break
     ime_datoteke = os.path.join("html-strani-knjig", f"knjiga-{i+1}")
     if not orodja.shrani_spletno_stran(url, ime_datoteke):
-        time.sleep(random.random() * 3 + 1)
+        time.sleep(random.random() * 3 + 1) # da ne pošljemo preveč poizvedb prehitro
     vsebina = orodja.vsebina_datoteke(ime_datoteke)
     knjiga = izloci_podatke(vsebina, i)
     if knjiga:
