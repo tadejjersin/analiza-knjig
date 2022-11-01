@@ -19,7 +19,7 @@ def shrani_spletno_stran(url, ime_datoteke, vsili_prenos=False):
         sys.stdout.flush()
         if os.path.isfile(ime_datoteke) and not vsili_prenos:
             print('shranjeno že od prej!')
-            return
+            return True
         r = requests.get(url)
     except requests.exceptions.ConnectionError:
         print('stran ne obstaja!')
