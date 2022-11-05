@@ -18,7 +18,7 @@ vzorec_knjige = re.compile(
     r'<meta itemprop="reviewCount" content="(?P<stevilo_mnenj>\d+)" />.*?'
     r'<div id="description" class="readable stacked" style="right:0">(?P<opis>.*?)</div>.*?'
     r'<span itemprop="numberOfPages">(?P<stevilo_strani>\d+) pages</span>.*?'
-    r'<nobr class="greyText">\s*\(first published .*?(?P<leto_izdaje>\d+)\)\s*</nobr>.*?'
+    r'<div class="row">\s*Published.*?(?P<leto_izdaje>\d{4})\s*.*?</div>.*?'
     r'<a class="actionLinkLite bookPageGenreLink" href=".*?">(?P<zanr1>.*?)</a>.*?'
     r'<a class="actionLinkLite bookPageGenreLink" href=".*?">(?P<zanr2>.*?)</a>.*?'
     r'<a class="actionLinkLite bookPageGenreLink" href=".*?">(?P<zanr3>.*?)</a>',
@@ -35,7 +35,7 @@ vzorec_knjige2 = re.compile( # včasih requests.get vrne html take oblike, včas
     r'<span class="Button__labelItem">(?P<zanr2>.*?)</span>.*?'
     r'<span class="Button__labelItem">(?P<zanr3>.*?)</span>.*?'
     r'<p data-testid="pagesFormat">(?P<stevilo_strani>\d+) pages.*?'
-    r'<p data-testid="publicationInfo">First published .*?(?P<leto_izdaje>\d+)</p>',
+    r'<p data-testid="publicationInfo">\w*\s*[pP]ublished .*?(?P<leto_izdaje>\d+)</p>',
     flags=re.DOTALL
 )
 
@@ -91,16 +91,18 @@ def izloci_zanre_in_opise(knjige):
     return opisi, zanri
     
 knjige = []
+naslovi_knjig = set()
 for i, url in enumerate(seznam_linkov):
-    if i >= 100:
-        break
     ime_datoteke = os.path.join("html-strani-knjig", f"knjiga-{i+1}")
     if not orodja.shrani_spletno_stran(url, ime_datoteke):
         time.sleep(random.random() * 3 + 1) # da ne pošljemo preveč poizvedb prehitro
-    vsebina = orodja.vsebina_datoteke(ime_datoteke)
-    knjiga = izloci_podatke(vsebina, i)
-    if knjiga:
-        knjige.append(knjiga)
+    print(i)
+    if os.path.isfile(ime_datoteke): # če slučajno spletna stran ne obstaja
+        vsebina = orodja.vsebina_datoteke(ime_datoteke)
+        knjiga = izloci_podatke(vsebina, i)
+        if knjiga and knjiga["naslov"] not in naslovi_knjig: # nekatere knjige se večkrat ponovijo, ker so na seznamu različne izdaje
+            knjige.append(knjiga)
+            naslovi_knjig.add(knjiga["naslov"])
 ime_json = os.path.join("obdelani-podatki", "knjige.json")
 orodja.zapisi_json(knjige, ime_json)
 opisi, zanri = izloci_zanre_in_opise(knjige)
