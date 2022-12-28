@@ -14,3 +14,4 @@ Datoteka knjige.json vsebuje vse prej navedene podatke, datoteka knjige.csv vse 
 - Najbolje ocenjene knjige bodo klasike
 - Ali kakšni žanri dobivajo bistveno boljše ocene kot ostali?
 - Ali dolžina knjige vpliva na oceno?
+- Kateri avtorji pišejo najdaljše knjige?
