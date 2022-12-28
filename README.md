@@ -15,3 +15,4 @@ Datoteka knjige.json vsebuje vse prej navedene podatke, datoteka knjige.csv vse 
 - Ali kakšni žanri dobivajo bistveno boljše ocene kot ostali?
 - Ali dolžina knjige vpliva na oceno?
 - Kateri avtorji pišejo najdaljše knjige?
+- Ali je razmerje med mnenji (reviews) in ocenami (ratings) povezano z oceno knjige?
